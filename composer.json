@@ -1,0 +1,24 @@
+{
+    "name": "adamtyn/lumen-artisan-config-cache",
+    "description": "移植Laravel的 `php artisan config:cache` [创建配置缓存文件]指令到Lumen",
+    "keywords": [
+        "framework",
+        "laravel",
+        "lumen",
+        "adamtyn"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AdamTyn",
+            "email": "tynadam@foxmail.com"
+        }
+    ],
+    "require": {},
+	"autoload":{
+		"psr-4": {
+            "AdamTyn\\Lumen\\Artisan\\": "src/"
+        }
+	}
+}
