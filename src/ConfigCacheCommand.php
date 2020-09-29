@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Console\Commands;
+namespace AdamTyn\Lumen\Artisan;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use LogicException;
 use Throwable;
+use Generator;
 
 class ConfigCacheCommand extends Command
 {
@@ -80,17 +81,17 @@ class ConfigCacheCommand extends Command
      */
     protected function getFreshConfiguration()
     {
-        $app = require $this->bootstrapPath(). DIRECTORY_SEPARATOR. 'app.php';
+        $app = require $this->bootstrapPath() . DIRECTORY_SEPARATOR . 'app.php';
 
         $app->useStoragePath($this->laravel->storagePath());
 
         $config = [];
 
-        foreach ($this->loadConfigurationFiles($this->baseConfigurationPath()) as $name => $path) {
+        foreach (self::loadConfigurationFiles($this->baseConfigurationPath()) as $name => $path) {
             $config[$name] = require $path;
         }
 
-        foreach ($this->loadConfigurationFiles($this->frameworkConfigurationPath()) as $name => $path) {
+        foreach (self::loadConfigurationFiles($this->frameworkConfigurationPath()) as $name => $path) {
             if (isset($config[$name])) {
                 continue;
             }
@@ -100,21 +101,45 @@ class ConfigCacheCommand extends Command
         return $config;
     }
 
+    /**
+     * @author AdamTyn
+     * @description 获取应用配置缓存文件的名称
+     *
+     * @return string
+     */
     private function getCachedConfigPath()
     {
         return $this->laravel->basePath('bootstrap/cache/config.php');
     }
 
+    /**
+     * @author AdamTyn
+     * @description 获取应用config目录路径
+     *
+     * @return string
+     */
     private function baseConfigurationPath()
     {
         return $this->laravel->basePath('config');
     }
 
+    /**
+     * @author AdamTyn
+     * @description 获取应用bootstrap目录路径
+     *
+     * @return string
+     */
     private function bootstrapPath()
     {
         return $this->laravel->basePath('bootstrap');
     }
 
+    /**
+     * @author AdamTyn
+     * @description 获取Lumen框架兜底config目录路径
+     *
+     * @return string
+     */
     private function frameworkConfigurationPath()
     {
         $divide = DIRECTORY_SEPARATOR;
@@ -130,7 +155,14 @@ class ConfigCacheCommand extends Command
         return $vendorPath . 'laravel/lumen-framework/config';
     }
 
-    private function loadConfigurationFiles($dir)
+    /**
+     * @author AdamTyn
+     * @description 加载指定目录下的*.php文件
+     *
+     * @param $dir
+     * @return Generator
+     */
+    private static function loadConfigurationFiles($dir)
     {
         if (is_dir($dir)) {
             $find = '.php';
